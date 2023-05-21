@@ -11,7 +11,7 @@ public static class LocalCertificates
     private const string EncryptionCertFriendlyName = "OpenIddict Server Development Encryption Certificate";
     private const string SigningCertFriendlyName = "OpenIddict Server Development Signing Certificate";
 
-    public static async Task CreateEncryptionCertificate()
+    public static async Task CreateEncryptionCertificate(string certificatePassword)
     {
         using var algorithm = RSA.Create(keySizeInBits: 2048);
 
@@ -30,7 +30,7 @@ public static class LocalCertificates
 
         SetFriendlyName(certificate, EncryptionCertFriendlyName);
 
-        var data = certificate.Export(X509ContentType.Pfx, string.Empty);
+        var data = certificate.Export(X509ContentType.Pfx, certificatePassword);
         var finalFile = $"{Directory.GetCurrentDirectory()}\\{EncryptionCertFilePath}";
         await File.WriteAllBytesAsync(finalFile, data);
         Console.WriteLine();
@@ -41,7 +41,7 @@ public static class LocalCertificates
         Console.WriteLine();
     }
 
-    public static async Task CreateSigningCertificate()
+    public static async Task CreateSigningCertificate(string certificatePassword)
     {
         using var algorithm = RSA.Create(keySizeInBits: 2048);
 
@@ -64,7 +64,7 @@ public static class LocalCertificates
         // as "persisted", which eventually prevents X509Store.Add() from correctly storing the private key. 
         // To work around this issue, the certificate payload is manually exported and imported back 
         // into a new X509Certificate2 instance specifying the X509KeyStorageFlags.PersistKeySet flag. 
-        var data = certificate.Export(X509ContentType.Pfx, string.Empty);
+        var data = certificate.Export(X509ContentType.Pfx, certificatePassword);
         var finalFile = $"{Directory.GetCurrentDirectory()}\\{SigningCertFilePath}";
         await File.WriteAllBytesAsync(finalFile, data);
         Console.WriteLine();
