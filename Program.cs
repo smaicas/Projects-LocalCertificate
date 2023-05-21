@@ -11,7 +11,6 @@ do
     switch (line)
     {
         case "encryption" or "e":
-            Console.WriteLine("Insert password (min. 8 characters)");
             p = ReadPassword();
             if (p == null)
             {
@@ -20,7 +19,6 @@ do
             await LocalCertificates.CreateEncryptionCertificate(p);
             break;
         case "signing" or "s":
-            Console.WriteLine("Insert password (min. 8 characters)");
             p = ReadPassword();
             if (p == null)
             {
