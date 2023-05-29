@@ -6,6 +6,7 @@ do
     Console.WriteLine("Create local certificates:");
     Console.WriteLine("Enter 'encryption' or 'e' to create Encryption Certificate");
     Console.WriteLine("Enter 'signing' or 's' to create Signing Certificate");
+    Console.WriteLine("Enter 'tls' or 't' to create TLS Certificate");
     string? line = Console.ReadLine();
     string? p;
     switch (line)
@@ -25,6 +26,14 @@ do
                 break;
             }
             await LocalCertificates.CreateSigningCertificate(p);
+            break;
+        case "tls" or "t":
+            p = ReadPassword();
+            if (p == null)
+            {
+                break;
+            }
+            await LocalCertificates.CreateTLSCertificate(p);
             break;
         case "exit":
             exit = true;
