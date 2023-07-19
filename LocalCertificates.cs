@@ -15,25 +15,25 @@ public static class LocalCertificates
 
     public static async Task CreateEncryptionCertificate(string certificatePassword)
     {
-        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        using RSA algorithm = RSA.Create(2048);
 
-        var request = new CertificateRequest(
-            subjectName: "CN=Encryption Certificate",
-            key: algorithm,
-            hashAlgorithm: HashAlgorithmName.SHA256,
-            padding: RSASignaturePadding.Pkcs1);
+        CertificateRequest request = new CertificateRequest(
+            "CN=Encryption Certificate",
+            algorithm,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
 
         request.CertificateExtensions.Add(
-            new X509KeyUsageExtension(X509KeyUsageFlags.KeyEncipherment, critical: true));
+            new X509KeyUsageExtension(X509KeyUsageFlags.KeyEncipherment, true));
 
-        var certificate = request.CreateSelfSigned(
-            notBefore: DateTimeOffset.UtcNow,
-            notAfter: DateTimeOffset.UtcNow.AddYears(2));
+        X509Certificate2 certificate = request.CreateSelfSigned(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddYears(2));
 
         SetFriendlyName(certificate, EncryptionCertFriendlyName);
 
-        var data = certificate.Export(X509ContentType.Pfx, certificatePassword);
-        var finalFile = $"{Directory.GetCurrentDirectory()}\\{EncryptionCertFilePath}";
+        byte[] data = certificate.Export(X509ContentType.Pfx, certificatePassword);
+        string finalFile = $"{Directory.GetCurrentDirectory()}\\{EncryptionCertFilePath}";
         await File.WriteAllBytesAsync(finalFile, data);
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Black;
@@ -45,20 +45,20 @@ public static class LocalCertificates
 
     public static async Task CreateSigningCertificate(string certificatePassword)
     {
-        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        using RSA algorithm = RSA.Create(2048);
 
-        var request = new CertificateRequest(
-            subjectName: "CN=Signing Certificate",
-            key: algorithm,
-            hashAlgorithm: HashAlgorithmName.SHA256,
-            padding: RSASignaturePadding.Pkcs1);
+        CertificateRequest request = new CertificateRequest(
+            "CN=Signing Certificate",
+            algorithm,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
 
         request.CertificateExtensions.Add(
-            new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, critical: true));
+            new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
 
-        var certificate = request.CreateSelfSigned(
-            notBefore: DateTimeOffset.UtcNow,
-            notAfter: DateTimeOffset.UtcNow.AddYears(2));
+        X509Certificate2 certificate = request.CreateSelfSigned(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddYears(2));
 
         SetFriendlyName(certificate, SigningCertFriendlyName);
 
@@ -66,8 +66,8 @@ public static class LocalCertificates
         // as "persisted", which eventually prevents X509Store.Add() from correctly storing the private key. 
         // To work around this issue, the certificate payload is manually exported and imported back 
         // into a new X509Certificate2 instance specifying the X509KeyStorageFlags.PersistKeySet flag. 
-        var data = certificate.Export(X509ContentType.Pfx, certificatePassword);
-        var finalFile = $"{Directory.GetCurrentDirectory()}\\{SigningCertFilePath}";
+        byte[] data = certificate.Export(X509ContentType.Pfx, certificatePassword);
+        string finalFile = $"{Directory.GetCurrentDirectory()}\\{SigningCertFilePath}";
         await File.WriteAllBytesAsync(finalFile, data);
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Black;
@@ -79,17 +79,17 @@ public static class LocalCertificates
 
     public static async Task CreateTLSCertificate(string certificatePassword)
     {
-        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        using RSA algorithm = RSA.Create(2048);
 
-        var request = new CertificateRequest(
-            subjectName: "CN=Signing Certificate",
-            key: algorithm,
-            hashAlgorithm: HashAlgorithmName.SHA256,
-            padding: RSASignaturePadding.Pkcs1);
+        CertificateRequest request = new CertificateRequest(
+            "CN=Signing Certificate",
+            algorithm,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
 
-        var certificate = request.CreateSelfSigned(
-            notBefore: DateTimeOffset.UtcNow,
-            notAfter: DateTimeOffset.UtcNow.AddYears(2));
+        X509Certificate2 certificate = request.CreateSelfSigned(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddYears(2));
 
         SetFriendlyName(certificate, TlsCertFriendlyName);
 
@@ -97,8 +97,8 @@ public static class LocalCertificates
         // as "persisted", which eventually prevents X509Store.Add() from correctly storing the private key. 
         // To work around this issue, the certificate payload is manually exported and imported back 
         // into a new X509Certificate2 instance specifying the X509KeyStorageFlags.PersistKeySet flag. 
-        var data = certificate.Export(X509ContentType.Pfx, certificatePassword);
-        var finalFile = $"{Directory.GetCurrentDirectory()}\\{TlsCertFilePath}";
+        byte[] data = certificate.Export(X509ContentType.Pfx, certificatePassword);
+        string finalFile = $"{Directory.GetCurrentDirectory()}\\{TlsCertFilePath}";
         await File.WriteAllBytesAsync(finalFile, data);
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Black;
@@ -112,9 +112,6 @@ public static class LocalCertificates
     {
         // Note: setting the friendly name is not supported on Unix machines (including Linux and macOS). 
         // To ensure an exception is not thrown by the property setter, an OS runtime check is used here. 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            certificate.FriendlyName = friendlyName;
-        }
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) certificate.FriendlyName = friendlyName;
     }
 }

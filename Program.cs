@@ -13,26 +13,17 @@ do
     {
         case "encryption" or "e":
             p = ReadPassword();
-            if (p == null)
-            {
-                break;
-            }
+            if (p == null) break;
             await LocalCertificates.CreateEncryptionCertificate(p);
             break;
         case "signing" or "s":
             p = ReadPassword();
-            if (p == null)
-            {
-                break;
-            }
+            if (p == null) break;
             await LocalCertificates.CreateSigningCertificate(p);
             break;
         case "tls" or "t":
             p = ReadPassword();
-            if (p == null)
-            {
-                break;
-            }
+            if (p == null) break;
             await LocalCertificates.CreateTLSCertificate(p);
             break;
         case "exit":
@@ -48,5 +39,4 @@ static string? ReadPassword()
     if (p is { Length: >= 8 }) return p;
     Console.WriteLine("Invalid password");
     return null;
-
 }
