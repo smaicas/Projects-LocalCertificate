@@ -17,7 +17,7 @@ public static class LocalCertificates
     {
         using RSA algorithm = RSA.Create(2048);
 
-        CertificateRequest request = new CertificateRequest(
+        CertificateRequest request = new(
             "CN=Encryption Certificate",
             algorithm,
             HashAlgorithmName.SHA256,
@@ -47,7 +47,7 @@ public static class LocalCertificates
     {
         using RSA algorithm = RSA.Create(2048);
 
-        CertificateRequest request = new CertificateRequest(
+        CertificateRequest request = new(
             "CN=Signing Certificate",
             algorithm,
             HashAlgorithmName.SHA256,
@@ -81,7 +81,7 @@ public static class LocalCertificates
     {
         using RSA algorithm = RSA.Create(2048);
 
-        CertificateRequest request = new CertificateRequest(
+        CertificateRequest request = new(
             "CN=Signing Certificate",
             algorithm,
             HashAlgorithmName.SHA256,
